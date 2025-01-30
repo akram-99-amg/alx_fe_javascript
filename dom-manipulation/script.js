@@ -5,7 +5,7 @@ const Quotes = JSON.parse(localStorage.getItem("quotes")) || [
     { text: "If you tell the truth, you don't have to remember anything.", category: "Wellness" },
 ]
 function saveQuotes(){
-    localStorage.getItem(JSON.stringify(Quotes))
+    localStorage.setItem(JSON.stringify(Quotes))
 }
 
 function showRandomQuote() {
