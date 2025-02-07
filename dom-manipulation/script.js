@@ -5,7 +5,7 @@ const Quotes = JSON.parse(localStorage.getItem("quotes")) || [
     { text: "If you tell the truth, you don't have to remember anything.", category: "Wellness" },
 ]
 function saveQuotes(){
-    localStorage.setItem(JSON.stringify(Quotes))
+    localStorage.setItem("quotes",JSON.stringify(Quotes))
 }
 
 function showRandomQuote() {
@@ -38,6 +38,36 @@ function addQuote() {
 
 }
 
+function exportToJsonFile() {
+    const dataStr = JSON.stringify(Quotes, null, 2);
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "quotes.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+document.getElementById("exportJson").addEventListener("click", exportToJsonFile);
+
+document.getElementById("importFile").addEventListener("change", importFromJsonFile);
+
+function importFromJsonFile(event) {
+    const fileReader = new FileReader();
+    fileReader.onload = function (event) {
+        try {
+            const importedQuotes = JSON.parse(event.target.result);
+            Quotes.push(...importedQuotes);
+            saveQuotes();
+            alert("Quotes imported successfully!");
+        } catch (error) {
+            alert("Invalid JSON file");
+        }
+    };
+    fileReader.readAsText(event.target.files[0]);
+}
 document.addEventListener("DOMContentLoaded", () => {
     showRandomQuote()
     createAddQuoteForm()
