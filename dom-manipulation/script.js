@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("quoteDisplay").innerHTML = lastViewedQuote || Quotes[0].text;
     populateCategories();
     restoreLastSelectedCategory();
+    fetchQuotesFromServer();
     syncWithServer();
 });
 
@@ -102,6 +103,19 @@ function importFromJsonFile(event) {
     fileReader.readAsText(event.target.files[0]);
 }
 
+async function fetchQuotesFromServer() {
+    try {
+        const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+        const serverQuotes = await response.json();
+        if (serverQuotes.length) {
+            localStorage.setItem("serverQuotes", JSON.stringify(serverQuotes));
+            alert("Quotes fetched from server!");
+        }
+    } catch (error) {
+        console.error("Error fetching quotes from server:", error);
+    }
+}
+
 async function syncWithServer() {
     try {
         const response = await fetch("https://jsonplaceholder.typicode.com/posts");
@@ -116,6 +130,7 @@ async function syncWithServer() {
 }
 
 setInterval(syncWithServer, 30000);
+
 
 document.addEventListener("DOMContentLoaded", () => {
     showRandomQuote()
