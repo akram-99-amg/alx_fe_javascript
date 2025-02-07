@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     populateCategories();
     restoreLastSelectedCategory();
     fetchQuotesFromServer();
-    syncWithServer();
+    syncQuotes();
 });
 
 async function addQuote() {
