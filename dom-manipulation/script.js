@@ -28,19 +28,33 @@ document.addEventListener("DOMContentLoaded", () => {
     syncWithServer();
 });
 
-function addQuote() {
+async function addQuote() {
     const quoteText = document.getElementById("newQuoteText");
     const quoteCategory = document.getElementById("newQuoteCategory");
 
     if (quoteText.value.trim() && quoteCategory.value.trim()) {
-        Quotes.push({ text: quoteText.value, category: quoteCategory.value });
+        const newQuote = { text: quoteText.value, category: quoteCategory.value };
+        Quotes.push(newQuote);
         saveQuotes();
-        syncWithServer();
+        await postQuoteToServer(newQuote);
         quoteText.value = "";
         quoteCategory.value = "";
         alert("Quote added successfully");
     } else {
         alert("Please enter both a quote and a category");
+    }
+}
+
+async function postQuoteToServer(quote) {
+    try {
+        await fetch("https://jsonplaceholder.typicode.com/posts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(quote)
+        });
+        console.log("Quote posted to server");
+    } catch (error) {
+        console.error("Error posting quote to server:", error);
     }
 }
 
