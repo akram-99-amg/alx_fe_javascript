@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("quoteDisplay").innerHTML = lastViewedQuote || Quotes[0].text;
     populateCategories();
     restoreLastSelectedCategory();
+    syncWithServer();
 });
 
 function addQuote() {
@@ -33,6 +34,7 @@ function addQuote() {
     if (quoteText.value.trim() && quoteCategory.value.trim()) {
         Quotes.push({ text: quoteText.value, category: quoteCategory.value });
         saveQuotes();
+        syncWithServer();
         quoteText.value = "";
         quoteCategory.value = "";
         alert("Quote added successfully");
@@ -91,6 +93,7 @@ function importFromJsonFile(event) {
             const importedQuotes = JSON.parse(event.target.result);
             Quotes.push(...importedQuotes);
             saveQuotes();
+            syncWithServer();
             alert("Quotes imported successfully!");
         } catch (error) {
             alert("Invalid JSON file");
@@ -98,6 +101,21 @@ function importFromJsonFile(event) {
     };
     fileReader.readAsText(event.target.files[0]);
 }
+
+async function syncWithServer() {
+    try {
+        const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+        const serverQuotes = await response.json();
+        if (serverQuotes.length) {
+            localStorage.setItem("serverQuotes", JSON.stringify(serverQuotes));
+            alert("Quotes synced with server!");
+        }
+    } catch (error) {
+        console.error("Error syncing with server:", error);
+    }
+}
+
+setInterval(syncWithServer, 30000);
 
 document.addEventListener("DOMContentLoaded", () => {
     showRandomQuote()
